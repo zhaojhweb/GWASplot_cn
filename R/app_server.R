@@ -418,13 +418,16 @@ app_server <- function(input, output, session) {
                          Sys.sleep(0.5)
                        }
                        if (input$blup_table_format == "csv"){
-                         write.csv(blup_data(), file)
+                         write.csv(blup_data(),
+						 file)
                        }
                        else if (input$blup_table_format == "tsv"){
-                         write_tsv(blup_data(), file)
+                         write_tsv(blup_data(),
+						 file)
                        }
                        else if (input$blup_table_format == "txt"){
-                         write.table(blup_data(), file)
+                         write.table(blup_data(),
+						 file)
                        }}
         )}
     )
@@ -616,10 +619,6 @@ app_server <- function(input, output, session) {
                        }
                        if (input$Cor_format == "csv"){
                          write.csv(trait_cor(),
-                                   file)
-                       }
-                       else if (input$Cor_format == "tsv"){
-                         write_tsv(trait_cor(),
                                    file)
                        }
                        else if (input$Cor_format == "txt"){

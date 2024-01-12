@@ -419,8 +419,8 @@ app_ui <- function(request) {
                              choices = c("pearson", "kendall", "spearman")
                  ),
                  radioButtons("Cor_format",
-                              "选择下载图片格式",
-                              choices = c("csv","tsv", "txt")
+                              "选择下载表格格式",
+                              choices = c("csv", "txt")
                  ),
                  numericInput("Cor_heatmap_width",
                               "选择下载图片宽度",
