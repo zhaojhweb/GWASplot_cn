@@ -1,0 +1,179 @@
+---
+title: "Untitled"
+author: "zhaojh"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+library(tidyverse)
+library("navdata")
+data("phone.call")
+name<-data.frame(c(phone.call$source,phone.call$destination))
+nodes<-name%>%
+    distinct()%>%
+mutate(location=c("western","western","central","nordic","southeastern",
+     "southeastern","southeastern","southern","sourthern",
+     "western","western","central","central","central","central","central"))
+colnames(nodes)<-c("label","location")
+```
+
+```{r}
+edges<-phone.call%>%
+    rename(from=source,to=destination,weight=n.call)
+```
+
+```{r}
+library(igraph)
+
+net_pc<-graph_from_data_frame(
+   d=edges,vertices=nodes,
+   directed=TRUE)
+
+net_pc
+plot(net_pc)
+```
+
+```{r}
+###计算节点的度
+deg<-degree(net_pc,mode="all")
+###设置颜色
+vcolor<-c("orange","red","lightblue","tomato","yellow")
+###指定节点的颜色
+V(net_pc)$color<-vcolor[factor(V(net_pc)$location)]
+###指定边的颜色
+E(net_pc)$width<-E(net_pc)$weight/2
+
+plot(net_pc,vertex.size=3*deg,
+vertex.label.cex=.7,vertex.label.dist=1,
+edge.color="gray50",edge.arrow.size=.4, edge.curved=.1)
+###添加图例
+legend(x=-1.5,y=1.5,levels(factor(V(net_pc)$location)),pch=21,col="#777777",pt.bg=vcolor)
+```
+
+```{r}
+l <- layout_with_fr(net_pc) 
+plot(net_pc, layout=l)
+```
+
+```{r}
+layouts <- grep("^layout_", ls("package:igraph"), value=TRUE)[-1]
+# Remove layouts that do not apply to our graph.
+layouts <- layouts[!grepl("bipartite|merge|norm|sugiyama|tree", layouts)]
+par(mfrow=c(5,3), mar=c(1,1,1,1)) 
+for (layout in layouts) {
+print(layout)
+l <- do.call(layout, list(net_pc))
+plot(net_pc, vertex.label="",edge.arrow.mode=0, layout=l, main=layout) }
+
+```
+```{r}
+library(tidyverse)
+library(dplyr)
+library(igraph)
+library(ggraph)
+library("navdata")
+data("phone.call")
+#来源地去重
+sources <- phone.call %>% distinct(source) %>% rename(label = source)
+#目的地去重
+destinations <- phone.call %>% distinct(destination) %>% rename(label = destination)
+#合并数据并添加一列索引 
+nodes <- full_join(sources, destinations, by = "label")
+nodes <- nodes %>% mutate(id = 1:nrow(nodes)) %>% select(id, everything()) 
+phone.call <- phone.call %>% rename(weight = n.call) 
+edges <- phone.call %>% left_join(nodes, by = c("source" = "label")) %>% rename(from = id)
+edges <- edges %>% left_join(nodes, by = c("destination" = "label")) %>% rename(to = id)
+edges <- select(edges, from, to, weight) 
+
+net.igraph <- graph_from_data_frame( d = edges, vertices = nodes, directed = T )
+deg<-degree(net.igraph,mode="all")
+vcolor<-c("orange","red","lightblue","tomato","yellow")
+V(net.igraph)$color<-vcolor[factor(V(net.igraph)$label)]
+E(net.igraph)$width<-E(net.igraph)$weight/2
+plot(net.igraph, edge.arrow.size = 0.2, layout = layout_as_star,edge.color="gray50",edge.arrow.size=.4, edge.curved=.1)
+```
+```{r}
+library(tidyverse)
+library(dplyr)
+library(igraph)
+tair <- read.delim("C:/Users/admin/Desktop/AtMYB.txt",
+                   header = T,
+                   check.names = F)
+#source列去除重复并改为label
+sources <- tair %>% distinct(node1) %>% rename(label = node1)
+destinations <- tair %>% distinct(node2) %>% rename(label = node2)
+nodes <- full_join(sources, destinations, by = "label")
+nodes <- nodes %>% mutate(id = 1:nrow(nodes)) %>% select(id, everything()) 
+tair <- tair %>% rename(weight = combined_score) 
+edges <- tair %>% left_join(nodes, by = c("node1" = "label")) %>% rename(from = id)
+edges <- edges %>% left_join(nodes, by = c("node2" = "label")) %>% rename(to = id)
+edges <- select(edges, from, to, weight) 
+net.igraph <- graph_from_data_frame( d = edges, vertices = nodes, directed = T )
+
+#shinyWidgets::shinyWidgetsGallery()
+
+
+
+deg<-igraph::degree(net.igraph, mode="all")
+
+#cols<-c("#A6CEE3","#1F78B4","#B2DF8A","#33A02C","#FB9A99") #搞一个色阶
+cols<-c("#B2DF8A") #搞一个色阶
+pal<-colorRampPalette(cols)(nrow(nodes))
+V(net.igraph)$color<-pal[factor(V(net.igraph)$label)]
+E(net.igraph)$width<-E(net.igraph)$weight/2
+plot(net.igraph, 
+     layout = layout_with_dh
+     ,
+     vertex.size=deg,#可以设置
+     vertex.label.cex = 0.09*deg,#字体大小，可以设置调节
+     #vertex.label.cex = 0.8,
+     #vertex.label = "",#选择是否显示节点名称
+     
+     vertex.frame.color = "white",
+     edge.color="gray90",  #搞一个调色板
+     edge.arrow.size=0.1,
+     edge.curved=0.1,
+     vertex.label.color="black"
+     )
+
+```
+
+
+```{r}
+library("qgraph")
+g <- graph_from_data_frame( d = edges, vertices = nodes, directed = F )
+e <- get.edgelist(g, names = F)
+l <- qgraph.layout.fruchtermanreingold(e, vcount = vcount(g),
+                                       area=8*(vcount(g)^2),
+                                       repulse.rad=(vcount(g)^3.1))
+plot(g, layout = l,vertex.size=4,vertex.label=NA)
+qgraph(e,layout="spring")
+```
+```{r}
+               
+```
+
