@@ -6,7 +6,7 @@
 #' @noRd
 app_server <- function(input, output, session) {
   options(shiny.maxRequestSize=3000*1024^2)
-  pathway2name1 <- read.delim("../data/extdata/path2name.txt",
+  pathway2name1 <- read.delim("data/extdata/path2name.txt",
                               header = F,
                               sep = "")
   pathway2name <- pathway2name1[-1,]
@@ -15,7 +15,7 @@ app_server <- function(input, output, session) {
     output$hmp_exm <- renderDT({
       if(input$uploadhmp_exm == "TRUE"){
         hmpdata <- reactive({
-          data <- read.delim("../data/extdata/mdp_genotype_test.hmp.txt",
+          data <- read.delim("data/extdata/mdp_genotype_test.hmp.txt",
                              header = T,
                              check.names = F)
           return(data)
@@ -40,12 +40,11 @@ app_server <- function(input, output, session) {
   observeEvent(input$structural_analyse,{
     if(input$uploadhmp_exm == "TRUE"){
       hmpdata <- reactive({
-        data <- read.delim("../data/extdata/mdp_genotype_test.hmp.txt",
+        data <- read.delim("data/extdata/mdp_genotype_test.hmp.txt",
                            header = F,
                            check.names = F)
-        return(data)}
-      )
-    }
+        return(data)
+        })}
     else if(input$uploadhmp_exm == "FALSE"){
       hmpdata <- reactive({
         req(input$uploadhmp)
@@ -60,11 +59,11 @@ app_server <- function(input, output, session) {
                    for (i in 1:5){
                      incProgress(1/5)
                      Sys.sleep(0.5)
-                   }
+                     }
                    hmp_num <- reactive(GAPIT(G = hmpdata(),
                                              output.numerical = F,
                                              file.output = F)
-                   )
+                                       )
                    treedata <- hmp_num()$GD
                    rownames(treedata) <- treedata[,1]
                    treedata_df <- dplyr::select(treedata, -1)
@@ -75,14 +74,14 @@ app_server <- function(input, output, session) {
                             layout = tree_type,
                             branch.length = "none") +
                        geom_tiplab()
+                     })
                    })
-                 })
     output$download_tree <- downloadHandler(
       filename = function(){
         paste0("Phylotree.",
                input$tree_farmat,
                sep = "")
-      },
+        },
       content = function(file){
         withProgress(message = "Downloading",
                      detail = "It will take some time ^-^",
@@ -128,14 +127,13 @@ app_server <- function(input, output, session) {
                          geom_tiplab()
                        plot(p_tree)
                        dev.off()
-                     }
-        )}
-    )
-  })
+                     })}
+      )
+    })
   observeEvent(input$PCA_2D,{
     if(input$uploadhmp_exm == "TRUE"){
       hmpdata <- reactive({
-        data <- read.delim("../data/extdata/mdp_genotype_test.hmp.txt",
+        data <- read.delim("data/extdata/mdp_genotype_test.hmp.txt",
                            header = F,
                            check.names = F)
         return(data)
@@ -233,7 +231,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$PCA_3D,{
     if(input$uploadhmp_exm == "TRUE"){
       hmpdata <- reactive({
-        data <- read.delim("../data/extdata/mdp_genotype_test.hmp.txt",
+        data <- read.delim("data/extdata/mdp_genotype_test.hmp.txt",
                            header = F,
                            check.names = F)
         return(data)}
@@ -335,7 +333,7 @@ app_server <- function(input, output, session) {
     output$pheno_exm <- renderDT({
       if(input$uploadpheno_exm == "TRUE"){
         phenodata <- reactive({
-          data <- read.delim("../data/extdata/blup_mdp_traits.txt",
+          data <- read.delim("data/extdata/blup_mdp_traits.txt",
                              check.names = F,
                              sep = "\t",
                              header = T)
@@ -363,7 +361,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$Calblup,{
     if(input$uploadpheno_exm == "TRUE"){
       phenodata <- reactive({
-        data <- read.delim("../data/extdata/blup_mdp_traits.txt",
+        data <- read.delim("data/extdata/blup_mdp_traits.txt",
                            check.names = F,
                            sep = "\t",
                            header = T)
@@ -487,7 +485,7 @@ app_server <- function(input, output, session) {
     output$traits_exm <- renderDT({
       if(input$Uploadtraits_exm == "TRUE"){
         traitdata <- reactive({
-          traitdata <- read.delim("../data/extdata/mdp_traits_2.txt",
+          traitdata <- read.delim("data/extdata/mdp_traits_2.txt",
                                   header = T,
                                   check.names = F)
           return(traitdata)})
@@ -512,7 +510,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$Cal_corr,{
     if(input$Uploadtraits_exm == "TRUE"){
       traitdata <- reactive({
-        traitdata <- read.table("../data/extdata/mdp_traits_2.txt",
+        traitdata <- read.table("data/extdata/mdp_traits_2.txt",
                                 header = T,
                                 row.names = 1,
                                 check.names = F)
@@ -631,7 +629,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$Hcluster_plot,{
     if(input$Uploadtraits_exm == "TRUE"){
       traitdata <- reactive({
-        traitdata <- read.table("../data/extdata/mdp_traits_2.txt",
+        traitdata <- read.table("data/extdata/mdp_traits_2.txt",
                                 header = T,
                                 row.names = 1,
                                 check.names = F)
@@ -715,7 +713,7 @@ app_server <- function(input, output, session) {
     output$Volcano_exm <- renderDT({
       if(input$UploadVolcano_exm == "TRUE"){
         de_result <- reactive({
-          de_result <- read.delim("../data/extdata/volcnao.txt",
+          de_result <- read.delim("data/extdata/volcnao.txt",
                                   header = T,
                                   sep = "\t",
                                   check.names = F)
@@ -742,7 +740,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$Volcano_plot,{
     if(input$UploadVolcano_exm == "TRUE"){
       de_result <- reactive({
-        de_result <- read.delim("../data/extdata/volcnao.txt",
+        de_result <- read.delim("data/extdata/volcnao.txt",
                                 header = T,
                                 sep = "\t",
                                 check.names = F)
@@ -842,7 +840,7 @@ app_server <- function(input, output, session) {
     output$heatmap_exm <- renderDT({
       if(input$Uploadheatmap_exm == "TRUE"){
         gene_expr <- reactive({
-          expr1 <- read.delim("../data/extdata/heatmap.txt",
+          expr1 <- read.delim("data/extdata/heatmap.txt",
                               header = T,
                               check.names = F)
           return(expr1)
@@ -869,7 +867,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$heatmap_plot,{
     if(input$Uploadheatmap_exm == "TRUE"){
       gene_expr <- reactive({
-        expr1 <- read.delim("../data/extdata/heatmap.txt",
+        expr1 <- read.delim("data/extdata/heatmap.txt",
                             header = T,
                             row.names = 1,
                             check.names = F)
@@ -963,7 +961,7 @@ app_server <- function(input, output, session) {
     output$geno_exm <- renderDT({
       if(input$uploadgeno_exm == "TRUE"){
         GWAS_Geno <- reactive({
-          data <- read.delim("../data/extdata/mdp_genotype_test.hmp.txt",
+          data <- read.delim("data/extdata/mdp_genotype_test.hmp.txt",
                              header = T,
                              check.names = F)
           return(data)
@@ -990,7 +988,7 @@ app_server <- function(input, output, session) {
     output$pheno_GWAS_exm <- renderDT({
       if(input$uploadpheno_GWAS_exm == "TRUE"){
         GWAS_pheno <- reactive({
-          data <- read.delim("../data/extdata/mdp_traits.txt",
+          data <- read.delim("data/extdata/mdp_traits.txt",
                              header = T,
                              check.names = F)
           return(data)}
@@ -1016,7 +1014,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$RunGWAS, {
     if(input$uploadgeno_exm == "TRUE"){
       GWAS_Geno <- reactive({
-        data <- read.delim("../data/extdata/mdp_genotype_test.hmp.txt",
+        data <- read.delim("data/extdata/mdp_genotype_test.hmp.txt",
                            header = F,
                            check.names = F)
         return(data)})
@@ -1032,7 +1030,7 @@ app_server <- function(input, output, session) {
 
     if(input$uploadpheno_exm == "TRUE"){
       GWAS_pheno <- reactive({
-        data <- read.delim("../data/extdata/mdp_traits.txt",
+        data <- read.delim("data/extdata/mdp_traits.txt",
                            header = T,
                            check.names = F
         )
@@ -1280,7 +1278,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$Extract, {
       if(input$uploadGXF_exm == "TRUE"){
         mygxf <- reactive({
-          gxf <- rtracklayer::import("../data/extdata/Zea_mays.Zm-B73-REFERENCE-NAM-5.0.57.zip")
+          gxf <- rtracklayer::import("data/extdata/Zea_mays.Zm-B73-REFERENCE-NAM-5.0.57.gff3")
           return(gxf)})
       }else if(input$uploadGXF_exm == "FALSE"){
         mygxf <- reactive({
@@ -1364,7 +1362,7 @@ app_server <- function(input, output, session) {
     output$LDhmp_exm <- renderDT({
       if(input$uploadLDhmp_exm == "TRUE"){
         LD_hmp <- reactive({
-          LD_hmp_data <- read_delim(file = "../data/extdata/LD_mdp_genotype_test.hmp.txt",
+          LD_hmp_data <- read_delim(file = "data/extdata/LD_mdp_genotype_test.hmp.txt",
                                     col_types = cols(chrom = col_character()))
           return(LD_hmp_data)})
       }
@@ -1387,7 +1385,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$Plot_LD,{
     if(input$uploadLDhmp_exm == "TRUE"){
       LD_hmp <- reactive({
-        LD_hmp_data <- read_delim(file = "../data/extdata/LD_mdp_genotype_test.hmp.txt",
+        LD_hmp_data <- read_delim(file = "data/extdata/LD_mdp_genotype_test.hmp.txt",
                                   col_types = cols(chrom = col_character()))
         return(LD_hmp_data)
       })}
@@ -1491,7 +1489,7 @@ app_server <- function(input, output, session) {
     output$GeneInfo_exm <- renderDT({
       if(input$UploadGeneInfo_exm == "TRUE"){
         GeneInfo <- reactive({
-          Info <- read.delim("../data/extdata/Barley_info.txt",
+          Info <- read.delim("data/extdata/Barley_info.txt",
                              check.names = F)
           return(Info)
         })}
@@ -1514,7 +1512,7 @@ app_server <- function(input, output, session) {
     output$GeneList_exm <- renderDT({
       if(input$UploadGeneList_exm == "TRUE"){
         gene_list <- reactive({
-          genelist <- read.delim("../data/extdata/Gene_list.txt",
+          genelist <- read.delim("data/extdata/Gene_list.txt",
                                  check.names = F)
           return(genelist)
         })
@@ -1537,7 +1535,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$Run_GO, {
     if(input$UploadGeneInfo_exm == "TRUE"){
       GeneInfo <- reactive({
-        Info <- read.delim("../data/extdata/Barley_info.txt",
+        Info <- read.delim("data/extdata/Barley_info.txt",
                            check.names = F)
         return(Info)
       })
@@ -1550,7 +1548,7 @@ app_server <- function(input, output, session) {
       })}
     if(input$UploadGeneList_exm == "TRUE"){
       gene_list <- reactive({
-        genelist <- read.delim("../data/extdata/Gene_list.txt",
+        genelist <- read.delim("data/extdata/Gene_list.txt",
                                check.names = F)
         return(genelist)
       })
@@ -1758,7 +1756,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$Run_KEGG, {
     if(input$UploadGeneInfo_exm == "TRUE"){
       GeneInfo <- reactive({
-        Info <- read.delim("../data/extdata/Barley_info.txt",
+        Info <- read.delim("data/extdata/Barley_info.txt",
                            check.names = F)
         return(Info)
       })}
@@ -1771,7 +1769,7 @@ app_server <- function(input, output, session) {
       })}
     if(input$UploadGeneList_exm == "TRUE"){
       gene_list <- reactive({
-        genelist <- read.delim("../data/extdata/Gene_list.txt",
+        genelist <- read.delim("data/extdata/Gene_list.txt",
                                check.names = F)
         return(genelist)
       })}
@@ -1938,7 +1936,7 @@ app_server <- function(input, output, session) {
     output$pcadata_exm <- renderDT({
       if(input$Upload_pcadata_exm == "TRUE"){
         pcadata <- reactive({
-          data <- read.table("../data/extdata/GSE179179_fpkm.txt",
+          data <- read.table("data/extdata/GSE179179_fpkm.txt",
                              sep = "\t",
                              header = T,
                              check.names = F)
@@ -1967,7 +1965,7 @@ app_server <- function(input, output, session) {
     output$pcadata_info_exm <- renderDT({
       if(input$Upload_pcadata_info_exm == "TRUE"){
         pcadata_info <- reactive({
-          data <- read.delim("../data/extdata/GSE179179_info.txt",
+          data <- read.delim("data/extdata/GSE179179_info.txt",
                              header = F,
                              row.names = 1,
                              check.names = F)
@@ -1995,7 +1993,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$pca_plot,{
     if(input$Upload_pcadata_exm == "TRUE"){
       pcadata <- reactive({
-        data <- read.table("../data/extdata/GSE179179_fpkm.txt",
+        data <- read.table("data/extdata/GSE179179_fpkm.txt",
                            sep = "\t",
                            header = T,
                            row.names = 1,
@@ -2014,7 +2012,7 @@ app_server <- function(input, output, session) {
       })}
     if(input$Upload_pcadata_info_exm == "TRUE"){
       pcadata_info <- reactive({
-        data <- read.delim("../data/extdata/GSE179179_info.txt",
+        data <- read.delim("data/extdata/GSE179179_info.txt",
                            header = F,
                            row.names = 1,
                            check.names = F)
@@ -2137,7 +2135,7 @@ app_server <- function(input, output, session) {
     output$ppi_exm <- renderDT({
       if(input$uploadppi_exm == "TRUE"){
         ppidata <- reactive({
-          data <- read.delim("../data/extdata/AtMYB.txt",
+          data <- read.delim("data/extdata/AtMYB.txt",
                              header = T,
                              check.names = F)
           return(data)}
@@ -2163,7 +2161,7 @@ app_server <- function(input, output, session) {
   observeEvent(input$plot_ppi,{
     if(input$uploadppi_exm == "TRUE"){
       ppidata <- reactive({
-        data <- read.delim("../data/extdata/AtMYB.txt",
+        data <- read.delim("data/extdata/AtMYB.txt",
                            header = T,
                            check.names = F)
         return(data)}
@@ -2237,7 +2235,7 @@ app_server <- function(input, output, session) {
                    else if(input$ppi_theme == "layout.grid.3d"){
                      mylayout <- layout.grid.3d
                    }
-                   else if(input$ppi_them == "layout.kamada.kawai"){
+                   else if(input$ppi_theme == "layout.kamada.kawai"){
                      mylayout <- layout.kamada.kawai
                    }
                    else if(input$ppi_theme == "layout.lgl"){
