@@ -789,8 +789,8 @@ app_ui <- function(request) {
                )
              )
     ),
-    tabPanel("PPI分析",
-             h4(strong("上传STRING分析结果")
+    tabPanel("PPI可视化",
+             h4(strong("基于STRING分析结果可视化")
              ),
              sidebarLayout(
                sidebarPanel(
