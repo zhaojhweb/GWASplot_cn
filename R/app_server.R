@@ -1275,7 +1275,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$Extract, {
       if(input$uploadGXF_exm == "TRUE"){
         mygxf <- reactive({
-          gxf <- rtracklayer::import("../data/extdata/Zea_mays.Zm-B73-REFERENCE-NAM-5.0.57.gff3")
+          gxf <- rtracklayer::import("../data/extdata/Zea_mays.Zm-B73-REFERENCE-NAM-5.0.57.zip")
           return(gxf)})
       }else if(input$uploadGXF_exm == "FALSE"){
         mygxf <- reactive({
